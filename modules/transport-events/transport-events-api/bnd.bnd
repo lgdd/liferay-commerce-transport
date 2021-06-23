@@ -1,0 +1,10 @@
+Bundle-Name: Commerce Demo - Transport Events API
+Bundle-SymbolicName: com.github.lgdd.liferay.commerce.transport.events.api
+Bundle-Version: 1.1.0
+Export-Package:\
+	com.github.lgdd.liferay.commerce.transport.events.exception,\
+	com.github.lgdd.liferay.commerce.transport.events.model,\
+	com.github.lgdd.liferay.commerce.transport.events.service,\
+	com.github.lgdd.liferay.commerce.transport.events.service.persistence
+-check: EXPORTS
+-includeresource: META-INF/service.xml=../transport-events-service/service.xml

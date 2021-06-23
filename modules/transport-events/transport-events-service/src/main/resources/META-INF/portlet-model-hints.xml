@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<model-hints>
+	<model name="com.github.lgdd.liferay.commerce.transport.events.model.TransportEvent">
+		<field name="uuid" type="String" />
+		<field name="transportEventId" type="long" />
+		<field name="commerceShipmentId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="userId" type="long" />
+		<field name="userName" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="carrier" type="String" />
+		<field name="trackingNumber" type="String" />
+		<field name="expectedDate" type="Date" />
+		<field name="shippingDate" type="Date" />
+		<field name="status" type="int" />
+		<field name="commerceAccountName" type="String" />
+	</model>
+</model-hints>

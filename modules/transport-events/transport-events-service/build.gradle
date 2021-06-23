@@ -1,0 +1,12 @@
+dependencies {
+	compileOnly group: "com.liferay.portal", name: "release.portal.api"
+	compileOnly group: "org.slf4j", name: "slf4j-api"
+
+	compile project(":modules:transport-events:transport-events-api")
+}
+
+buildService {
+	apiDir = "../transport-events-api/src/main/java"
+}
+
+group = "transport.events"

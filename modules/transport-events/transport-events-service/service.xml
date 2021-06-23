@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.3.0//EN"
+  "http://www.liferay.com/dtd/liferay-service-builder_7_3_0.dtd">
+
+<service-builder dependency-injector="ds" package-path="com.github.lgdd.liferay.commerce.transport.events">
+  <namespace>CommerceDemo</namespace>
+  <entity name="TransportEvent" uuid="true" remote-service="false" local-service="true">
+
+    <!-- PK fields -->
+
+    <column name="transportEventId" primary="true" type="long"/>
+
+    <!-- FK fields -->
+
+    <column name="commerceShipmentId" type="long"/>
+
+    <!-- Group instance -->
+
+    <column name="groupId" type="long"/>
+
+    <!-- Audit fields -->
+
+    <column name="companyId" type="long"/>
+    <column name="userId" type="long"/>
+    <column name="userName" type="String"/>
+    <column name="createDate" type="Date"/>
+    <column name="modifiedDate" type="Date"/>
+
+    <!-- Other fields -->
+
+    <column name="carrier" type="String"/>
+    <column name="trackingNumber" type="String"/>
+    <column name="expectedDate" type="Date"/>
+    <column name="shippingDate" type="Date"/>
+    <column name="status" type="int"/>
+    <column name="commerceAccountName" type="String" />
+
+    <!-- Order -->
+
+    <order by="desc">
+      <order-column name="createDate" order-by="desc"/>
+    </order>
+
+    <!-- Finder methods -->
+
+    <finder name="CommerceShipmentId" return-type="Collection">
+      <finder-column name="commerceShipmentId"/>
+    </finder>
+
+    <finder name="TrackingNumber" return-type="Collection">
+      <finder-column name="trackingNumber"/>
+    </finder>
+
+    <finder name="Carrier" return-type="Collection">
+      <finder-column name="carrier"/>
+    </finder>
+
+    <!-- Reference to Group entity service -->
+
+    <reference entity="Group" package-path="com.liferay.portal"/>
+
+    <!-- References -->
+
+    <reference entity="AssetEntry" package-path="com.liferay.portlet.asset"/>
+    <reference entity="AssetLink" package-path="com.liferay.portlet.asset"/>
+    <reference entity="AssetTag" package-path="com.liferay.portlet.asset"/>
+
+  </entity>
+</service-builder>
