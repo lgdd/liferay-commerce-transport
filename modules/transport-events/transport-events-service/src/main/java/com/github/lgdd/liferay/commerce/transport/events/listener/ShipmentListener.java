@@ -69,13 +69,13 @@ public class ShipmentListener
 	}
 
 	@Override
-	public void onAfterUpdate(CommerceShipment shipment)
+	public void onAfterUpdate(CommerceShipment originalShipment, CommerceShipment shipment)
 		throws ModelListenerException {
 
-		registerEvent(shipment);
-		updateFriendlyURLEntries(shipment);
+		registerEvent(originalShipment);
+		updateFriendlyURLEntries(originalShipment);
 
-		super.onAfterUpdate(shipment);
+		super.onAfterUpdate(originalShipment,shipment);
 	}
 
 	protected void registerEvent(CommerceShipment shipment)

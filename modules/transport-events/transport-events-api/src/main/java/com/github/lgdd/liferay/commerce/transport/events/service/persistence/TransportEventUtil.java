@@ -26,10 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.util.tracker.ServiceTracker;
-
 /**
  * The persistence utility for the transport event service. This utility wraps <code>com.github.lgdd.liferay.commerce.transport.events.service.persistence.impl.TransportEventPersistenceImpl</code> and provides direct access to the database for CRUD operations. This utility should only be used by the service layer, as it must operate within a transaction. Never access this utility in a JSP, controller, model, or other front-end class.
  *
@@ -1223,26 +1219,9 @@ public class TransportEventUtil {
 	}
 
 	public static TransportEventPersistence getPersistence() {
-		return _serviceTracker.getService();
+		return _persistence;
 	}
 
-	private static ServiceTracker
-		<TransportEventPersistence, TransportEventPersistence> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(
-			TransportEventPersistence.class);
-
-		ServiceTracker<TransportEventPersistence, TransportEventPersistence>
-			serviceTracker =
-				new ServiceTracker
-					<TransportEventPersistence, TransportEventPersistence>(
-						bundle.getBundleContext(),
-						TransportEventPersistence.class, null);
-
-		serviceTracker.open();
-
-		_serviceTracker = serviceTracker;
-	}
+	private static volatile TransportEventPersistence _persistence;
 
 }

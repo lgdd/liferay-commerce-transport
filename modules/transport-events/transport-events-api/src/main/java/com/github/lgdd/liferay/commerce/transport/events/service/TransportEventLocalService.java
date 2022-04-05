@@ -17,6 +17,7 @@ package com.github.lgdd.liferay.commerce.transport.events.service;
 import com.github.lgdd.liferay.commerce.transport.events.model.TransportEvent;
 
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
+import com.liferay.petra.sql.dsl.query.DSLQuery;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
@@ -134,6 +135,12 @@ public interface TransportEventLocalService
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	public TransportEvent deleteTransportEvent(TransportEvent transportEvent);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public <T> T dslQuery(DSLQuery dslQuery);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int dslQueryCount(DSLQuery dslQuery);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public DynamicQuery dynamicQuery();

@@ -27,6 +27,10 @@ public class TransportEventLocalServiceWrapper
 	implements ServiceWrapper<TransportEventLocalService>,
 			   TransportEventLocalService {
 
+	public TransportEventLocalServiceWrapper() {
+		this(null);
+	}
+
 	public TransportEventLocalServiceWrapper(
 		TransportEventLocalService transportEventLocalService) {
 
@@ -146,6 +150,18 @@ public class TransportEventLocalServiceWrapper
 					TransportEvent transportEvent) {
 
 		return _transportEventLocalService.deleteTransportEvent(transportEvent);
+	}
+
+	@Override
+	public <T> T dslQuery(com.liferay.petra.sql.dsl.query.DSLQuery dslQuery) {
+		return _transportEventLocalService.dslQuery(dslQuery);
+	}
+
+	@Override
+	public int dslQueryCount(
+		com.liferay.petra.sql.dsl.query.DSLQuery dslQuery) {
+
+		return _transportEventLocalService.dslQueryCount(dslQuery);
 	}
 
 	@Override

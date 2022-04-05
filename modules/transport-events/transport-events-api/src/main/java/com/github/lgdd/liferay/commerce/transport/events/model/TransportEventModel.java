@@ -305,4 +305,7 @@ public interface TransportEventModel
 	 */
 	public void setCommerceAccountName(String commerceAccountName);
 
+	@Override
+	public TransportEvent cloneWithOriginalValues();
+
 }
