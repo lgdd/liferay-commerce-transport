@@ -156,6 +156,11 @@ public class TransportEventWrapper
 		}
 	}
 
+	@Override
+	public TransportEvent cloneWithOriginalValues() {
+		return wrap(model.cloneWithOriginalValues());
+	}
+
 	/**
 	 * Returns the carrier of this transport event.
 	 *

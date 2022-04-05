@@ -16,14 +16,15 @@ package com.github.lgdd.liferay.commerce.transport.events.service.persistence.im
 
 import com.github.lgdd.liferay.commerce.transport.events.exception.NoSuchTransportEventException;
 import com.github.lgdd.liferay.commerce.transport.events.model.TransportEvent;
+import com.github.lgdd.liferay.commerce.transport.events.model.TransportEventTable;
 import com.github.lgdd.liferay.commerce.transport.events.model.impl.TransportEventImpl;
 import com.github.lgdd.liferay.commerce.transport.events.model.impl.TransportEventModelImpl;
 import com.github.lgdd.liferay.commerce.transport.events.service.persistence.TransportEventPersistence;
+import com.github.lgdd.liferay.commerce.transport.events.service.persistence.TransportEventUtil;
 import com.github.lgdd.liferay.commerce.transport.events.service.persistence.impl.constants.CommerceDemoPersistenceConstants;
 
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.configuration.Configuration;
-import com.liferay.portal.kernel.dao.orm.ArgumentsResolver;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -34,13 +35,15 @@ import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.service.persistence.BasePersistence;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
-import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -48,21 +51,18 @@ import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 
 import java.io.Serializable;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.sql.DataSource;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -78,7 +78,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Brian Wing Shun Chan
  * @generated
  */
-@Component(service = TransportEventPersistence.class)
+@Component(service = {TransportEventPersistence.class, BasePersistence.class})
 public class TransportEventPersistenceImpl
 	extends BasePersistenceImpl<TransportEvent>
 	implements TransportEventPersistence {
@@ -195,7 +195,7 @@ public class TransportEventPersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<TransportEvent>)finderCache.getResult(
-				finderPath, finderArgs, this);
+				finderPath, finderArgs);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (TransportEvent transportEvent : list) {
@@ -578,7 +578,7 @@ public class TransportEventPersistenceImpl
 
 		Object[] finderArgs = new Object[] {uuid};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(2);
@@ -708,7 +708,7 @@ public class TransportEventPersistenceImpl
 
 		if (useFinderCache) {
 			result = finderCache.getResult(
-				_finderPathFetchByUUID_G, finderArgs, this);
+				_finderPathFetchByUUID_G, finderArgs);
 		}
 
 		if (result instanceof TransportEvent) {
@@ -819,7 +819,7 @@ public class TransportEventPersistenceImpl
 
 		Object[] finderArgs = new Object[] {uuid, groupId};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(3);
@@ -985,7 +985,7 @@ public class TransportEventPersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<TransportEvent>)finderCache.getResult(
-				finderPath, finderArgs, this);
+				finderPath, finderArgs);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (TransportEvent transportEvent : list) {
@@ -1401,7 +1401,7 @@ public class TransportEventPersistenceImpl
 
 		Object[] finderArgs = new Object[] {uuid, companyId};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(3);
@@ -1564,7 +1564,7 @@ public class TransportEventPersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<TransportEvent>)finderCache.getResult(
-				finderPath, finderArgs, this);
+				finderPath, finderArgs);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (TransportEvent transportEvent : list) {
@@ -1932,7 +1932,7 @@ public class TransportEventPersistenceImpl
 
 		Object[] finderArgs = new Object[] {commerceShipmentId};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(2);
@@ -2074,7 +2074,7 @@ public class TransportEventPersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<TransportEvent>)finderCache.getResult(
-				finderPath, finderArgs, this);
+				finderPath, finderArgs);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (TransportEvent transportEvent : list) {
@@ -2468,7 +2468,7 @@ public class TransportEventPersistenceImpl
 
 		Object[] finderArgs = new Object[] {trackingNumber};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(2);
@@ -2620,7 +2620,7 @@ public class TransportEventPersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<TransportEvent>)finderCache.getResult(
-				finderPath, finderArgs, this);
+				finderPath, finderArgs);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (TransportEvent transportEvent : list) {
@@ -3005,7 +3005,7 @@ public class TransportEventPersistenceImpl
 
 		Object[] finderArgs = new Object[] {carrier};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(2);
@@ -3070,6 +3070,8 @@ public class TransportEventPersistenceImpl
 
 		setModelImplClass(TransportEventImpl.class);
 		setModelPKClass(long.class);
+
+		setTable(TransportEventTable.INSTANCE);
 	}
 
 	/**
@@ -3091,6 +3093,8 @@ public class TransportEventPersistenceImpl
 			transportEvent);
 	}
 
+	private int _valueObjectFinderCacheListThreshold;
+
 	/**
 	 * Caches the transport events in the entity cache if it is enabled.
 	 *
@@ -3098,6 +3102,13 @@ public class TransportEventPersistenceImpl
 	 */
 	@Override
 	public void cacheResult(List<TransportEvent> transportEvents) {
+		if ((_valueObjectFinderCacheListThreshold == 0) ||
+			((_valueObjectFinderCacheListThreshold > 0) &&
+			 (transportEvents.size() > _valueObjectFinderCacheListThreshold))) {
+
+			return;
+		}
+
 		for (TransportEvent transportEvent : transportEvents) {
 			if (entityCache.getResult(
 					TransportEventImpl.class, transportEvent.getPrimaryKey()) ==
@@ -3119,9 +3130,7 @@ public class TransportEventPersistenceImpl
 	public void clearCache() {
 		entityCache.clearCache(TransportEventImpl.class);
 
-		finderCache.clearCache(FINDER_CLASS_NAME_ENTITY);
-		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+		finderCache.clearCache(TransportEventImpl.class);
 	}
 
 	/**
@@ -3145,9 +3154,7 @@ public class TransportEventPersistenceImpl
 
 	@Override
 	public void clearCache(Set<Serializable> primaryKeys) {
-		finderCache.clearCache(FINDER_CLASS_NAME_ENTITY);
-		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+		finderCache.clearCache(TransportEventImpl.class);
 
 		for (Serializable primaryKey : primaryKeys) {
 			entityCache.removeResult(TransportEventImpl.class, primaryKey);
@@ -3162,10 +3169,9 @@ public class TransportEventPersistenceImpl
 			transportEventModelImpl.getGroupId()
 		};
 
+		finderCache.putResult(_finderPathCountByUUID_G, args, Long.valueOf(1));
 		finderCache.putResult(
-			_finderPathCountByUUID_G, args, Long.valueOf(1), false);
-		finderCache.putResult(
-			_finderPathFetchByUUID_G, args, transportEventModelImpl, false);
+			_finderPathFetchByUUID_G, args, transportEventModelImpl);
 	}
 
 	/**
@@ -3309,24 +3315,25 @@ public class TransportEventPersistenceImpl
 		ServiceContext serviceContext =
 			ServiceContextThreadLocal.getServiceContext();
 
-		Date now = new Date();
+		Date date = new Date();
 
 		if (isNew && (transportEvent.getCreateDate() == null)) {
 			if (serviceContext == null) {
-				transportEvent.setCreateDate(now);
+				transportEvent.setCreateDate(date);
 			}
 			else {
-				transportEvent.setCreateDate(serviceContext.getCreateDate(now));
+				transportEvent.setCreateDate(
+					serviceContext.getCreateDate(date));
 			}
 		}
 
 		if (!transportEventModelImpl.hasSetModifiedDate()) {
 			if (serviceContext == null) {
-				transportEvent.setModifiedDate(now);
+				transportEvent.setModifiedDate(date);
 			}
 			else {
 				transportEvent.setModifiedDate(
-					serviceContext.getModifiedDate(now));
+					serviceContext.getModifiedDate(date));
 			}
 		}
 
@@ -3497,7 +3504,7 @@ public class TransportEventPersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<TransportEvent>)finderCache.getResult(
-				finderPath, finderArgs, this);
+				finderPath, finderArgs);
 		}
 
 		if (list == null) {
@@ -3567,7 +3574,7 @@ public class TransportEventPersistenceImpl
 	@Override
 	public int countAll() {
 		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
+			_finderPathCountAll, FINDER_ARGS_EMPTY);
 
 		if (count == null) {
 			Session session = null;
@@ -3622,27 +3629,23 @@ public class TransportEventPersistenceImpl
 	 * Initializes the transport event persistence.
 	 */
 	@Activate
-	public void activate(BundleContext bundleContext) {
-		_bundleContext = bundleContext;
+	public void activate() {
+		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
+			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
 
-		_argumentsResolverServiceRegistration = _bundleContext.registerService(
-			ArgumentsResolver.class, new TransportEventModelArgumentsResolver(),
-			MapUtil.singletonDictionary(
-				"model.class.name", TransportEvent.class.getName()));
-
-		_finderPathWithPaginationFindAll = _createFinderPath(
+		_finderPathWithPaginationFindAll = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
 			new String[0], true);
 
-		_finderPathWithoutPaginationFindAll = _createFinderPath(
+		_finderPathWithoutPaginationFindAll = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
 			new String[0], true);
 
-		_finderPathCountAll = _createFinderPath(
+		_finderPathCountAll = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
 			new String[0], new String[0], false);
 
-		_finderPathWithPaginationFindByUuid = _createFinderPath(
+		_finderPathWithPaginationFindByUuid = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
 			new String[] {
 				String.class.getName(), Integer.class.getName(),
@@ -3650,27 +3653,27 @@ public class TransportEventPersistenceImpl
 			},
 			new String[] {"uuid_"}, true);
 
-		_finderPathWithoutPaginationFindByUuid = _createFinderPath(
+		_finderPathWithoutPaginationFindByUuid = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
 			new String[] {String.class.getName()}, new String[] {"uuid_"},
 			true);
 
-		_finderPathCountByUuid = _createFinderPath(
+		_finderPathCountByUuid = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
 			new String[] {String.class.getName()}, new String[] {"uuid_"},
 			false);
 
-		_finderPathFetchByUUID_G = _createFinderPath(
+		_finderPathFetchByUUID_G = new FinderPath(
 			FINDER_CLASS_NAME_ENTITY, "fetchByUUID_G",
 			new String[] {String.class.getName(), Long.class.getName()},
 			new String[] {"uuid_", "groupId"}, true);
 
-		_finderPathCountByUUID_G = _createFinderPath(
+		_finderPathCountByUUID_G = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUUID_G",
 			new String[] {String.class.getName(), Long.class.getName()},
 			new String[] {"uuid_", "groupId"}, false);
 
-		_finderPathWithPaginationFindByUuid_C = _createFinderPath(
+		_finderPathWithPaginationFindByUuid_C = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
 			new String[] {
 				String.class.getName(), Long.class.getName(),
@@ -3679,17 +3682,17 @@ public class TransportEventPersistenceImpl
 			},
 			new String[] {"uuid_", "companyId"}, true);
 
-		_finderPathWithoutPaginationFindByUuid_C = _createFinderPath(
+		_finderPathWithoutPaginationFindByUuid_C = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid_C",
 			new String[] {String.class.getName(), Long.class.getName()},
 			new String[] {"uuid_", "companyId"}, true);
 
-		_finderPathCountByUuid_C = _createFinderPath(
+		_finderPathCountByUuid_C = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
 			new String[] {String.class.getName(), Long.class.getName()},
 			new String[] {"uuid_", "companyId"}, false);
 
-		_finderPathWithPaginationFindByCommerceShipmentId = _createFinderPath(
+		_finderPathWithPaginationFindByCommerceShipmentId = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByCommerceShipmentId",
 			new String[] {
 				Long.class.getName(), Integer.class.getName(),
@@ -3697,18 +3700,17 @@ public class TransportEventPersistenceImpl
 			},
 			new String[] {"commerceShipmentId"}, true);
 
-		_finderPathWithoutPaginationFindByCommerceShipmentId =
-			_createFinderPath(
-				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-				"findByCommerceShipmentId", new String[] {Long.class.getName()},
-				new String[] {"commerceShipmentId"}, true);
+		_finderPathWithoutPaginationFindByCommerceShipmentId = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"findByCommerceShipmentId", new String[] {Long.class.getName()},
+			new String[] {"commerceShipmentId"}, true);
 
-		_finderPathCountByCommerceShipmentId = _createFinderPath(
+		_finderPathCountByCommerceShipmentId = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 			"countByCommerceShipmentId", new String[] {Long.class.getName()},
 			new String[] {"commerceShipmentId"}, false);
 
-		_finderPathWithPaginationFindByTrackingNumber = _createFinderPath(
+		_finderPathWithPaginationFindByTrackingNumber = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByTrackingNumber",
 			new String[] {
 				String.class.getName(), Integer.class.getName(),
@@ -3716,17 +3718,17 @@ public class TransportEventPersistenceImpl
 			},
 			new String[] {"trackingNumber"}, true);
 
-		_finderPathWithoutPaginationFindByTrackingNumber = _createFinderPath(
+		_finderPathWithoutPaginationFindByTrackingNumber = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByTrackingNumber",
 			new String[] {String.class.getName()},
 			new String[] {"trackingNumber"}, true);
 
-		_finderPathCountByTrackingNumber = _createFinderPath(
+		_finderPathCountByTrackingNumber = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByTrackingNumber",
 			new String[] {String.class.getName()},
 			new String[] {"trackingNumber"}, false);
 
-		_finderPathWithPaginationFindByCarrier = _createFinderPath(
+		_finderPathWithPaginationFindByCarrier = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByCarrier",
 			new String[] {
 				String.class.getName(), Integer.class.getName(),
@@ -3734,27 +3736,39 @@ public class TransportEventPersistenceImpl
 			},
 			new String[] {"carrier"}, true);
 
-		_finderPathWithoutPaginationFindByCarrier = _createFinderPath(
+		_finderPathWithoutPaginationFindByCarrier = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByCarrier",
 			new String[] {String.class.getName()}, new String[] {"carrier"},
 			true);
 
-		_finderPathCountByCarrier = _createFinderPath(
+		_finderPathCountByCarrier = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByCarrier",
 			new String[] {String.class.getName()}, new String[] {"carrier"},
 			false);
+
+		_setTransportEventUtilPersistence(this);
 	}
 
 	@Deactivate
 	public void deactivate() {
+		_setTransportEventUtilPersistence(null);
+
 		entityCache.removeCache(TransportEventImpl.class.getName());
+	}
 
-		_argumentsResolverServiceRegistration.unregister();
+	private void _setTransportEventUtilPersistence(
+		TransportEventPersistence transportEventPersistence) {
 
-		for (ServiceRegistration<FinderPath> serviceRegistration :
-				_serviceRegistrations) {
+		try {
+			Field field = TransportEventUtil.class.getDeclaredField(
+				"_persistence");
 
-			serviceRegistration.unregister();
+			field.setAccessible(true);
+
+			field.set(null, transportEventPersistence);
+		}
+		catch (ReflectiveOperationException reflectiveOperationException) {
+			throw new RuntimeException(reflectiveOperationException);
 		}
 	}
 
@@ -3783,8 +3797,6 @@ public class TransportEventPersistenceImpl
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		super.setSessionFactory(sessionFactory);
 	}
-
-	private BundleContext _bundleContext;
 
 	@Reference
 	protected EntityCache entityCache;
@@ -3818,123 +3830,13 @@ public class TransportEventPersistenceImpl
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
-	private FinderPath _createFinderPath(
-		String cacheName, String methodName, String[] params,
-		String[] columnNames, boolean baseModelResult) {
-
-		FinderPath finderPath = new FinderPath(
-			cacheName, methodName, params, columnNames, baseModelResult);
-
-		if (!cacheName.equals(FINDER_CLASS_NAME_LIST_WITH_PAGINATION)) {
-			_serviceRegistrations.add(
-				_bundleContext.registerService(
-					FinderPath.class, finderPath,
-					MapUtil.singletonDictionary("cache.name", cacheName)));
-		}
-
-		return finderPath;
+	@Override
+	protected FinderCache getFinderCache() {
+		return finderCache;
 	}
 
-	private Set<ServiceRegistration<FinderPath>> _serviceRegistrations =
-		new HashSet<>();
-	private ServiceRegistration<ArgumentsResolver>
-		_argumentsResolverServiceRegistration;
-
-	private static class TransportEventModelArgumentsResolver
-		implements ArgumentsResolver {
-
-		@Override
-		public Object[] getArguments(
-			FinderPath finderPath, BaseModel<?> baseModel, boolean checkColumn,
-			boolean original) {
-
-			String[] columnNames = finderPath.getColumnNames();
-
-			if ((columnNames == null) || (columnNames.length == 0)) {
-				if (baseModel.isNew()) {
-					return FINDER_ARGS_EMPTY;
-				}
-
-				return null;
-			}
-
-			TransportEventModelImpl transportEventModelImpl =
-				(TransportEventModelImpl)baseModel;
-
-			long columnBitmask = transportEventModelImpl.getColumnBitmask();
-
-			if (!checkColumn || (columnBitmask == 0)) {
-				return _getValue(
-					transportEventModelImpl, columnNames, original);
-			}
-
-			Long finderPathColumnBitmask = _finderPathColumnBitmasksCache.get(
-				finderPath);
-
-			if (finderPathColumnBitmask == null) {
-				finderPathColumnBitmask = 0L;
-
-				for (String columnName : columnNames) {
-					finderPathColumnBitmask |=
-						transportEventModelImpl.getColumnBitmask(columnName);
-				}
-
-				if (finderPath.isBaseModelResult() &&
-					(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION ==
-						finderPath.getCacheName())) {
-
-					finderPathColumnBitmask |= _ORDER_BY_COLUMNS_BITMASK;
-				}
-
-				_finderPathColumnBitmasksCache.put(
-					finderPath, finderPathColumnBitmask);
-			}
-
-			if ((columnBitmask & finderPathColumnBitmask) != 0) {
-				return _getValue(
-					transportEventModelImpl, columnNames, original);
-			}
-
-			return null;
-		}
-
-		private static Object[] _getValue(
-			TransportEventModelImpl transportEventModelImpl,
-			String[] columnNames, boolean original) {
-
-			Object[] arguments = new Object[columnNames.length];
-
-			for (int i = 0; i < arguments.length; i++) {
-				String columnName = columnNames[i];
-
-				if (original) {
-					arguments[i] =
-						transportEventModelImpl.getColumnOriginalValue(
-							columnName);
-				}
-				else {
-					arguments[i] = transportEventModelImpl.getColumnValue(
-						columnName);
-				}
-			}
-
-			return arguments;
-		}
-
-		private static final Map<FinderPath, Long>
-			_finderPathColumnBitmasksCache = new ConcurrentHashMap<>();
-
-		private static final long _ORDER_BY_COLUMNS_BITMASK;
-
-		static {
-			long orderByColumnsBitmask = 0;
-
-			orderByColumnsBitmask |= TransportEventModelImpl.getColumnBitmask(
-				"createDate");
-
-			_ORDER_BY_COLUMNS_BITMASK = orderByColumnsBitmask;
-		}
-
-	}
+	@Reference
+	private TransportEventModelArgumentsResolver
+		_transportEventModelArgumentsResolver;
 
 }

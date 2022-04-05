@@ -4,7 +4,7 @@ import com.liferay.commerce.constants.CommerceShipmentConstants;
 import com.liferay.commerce.frontend.model.LabelField;
 import com.liferay.commerce.frontend.model.Shipment;
 import com.liferay.commerce.model.CommerceAddress;
-import com.liferay.commerce.model.CommerceRegion;
+import com.liferay.portal.kernel.model.Region;
 import com.liferay.commerce.model.CommerceShipment;
 import com.liferay.commerce.product.model.CommerceChannel;
 import com.liferay.commerce.product.service.CommerceChannelLocalService;
@@ -198,7 +198,7 @@ public class ShipmentTransportEventsTable
 			return StringPool.BLANK;
 		}
 
-		CommerceRegion commerceRegion = commerceAddress.getCommerceRegion();
+		Region commerceRegion = commerceAddress.getRegion();
 
 		StringBundler sb = new StringBundler((commerceRegion == null) ? 5 : 7);
 
@@ -208,7 +208,7 @@ public class ShipmentTransportEventsTable
 		sb.append(StringPool.NEW_LINE);
 
 		if (commerceRegion != null) {
-			sb.append(commerceRegion.getCode());
+			sb.append(commerceRegion.getRegionCode());
 			sb.append(StringPool.SPACE);
 		}
 

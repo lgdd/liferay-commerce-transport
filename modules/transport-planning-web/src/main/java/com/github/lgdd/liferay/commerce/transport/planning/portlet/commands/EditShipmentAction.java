@@ -94,10 +94,12 @@ public class EditShipmentAction extends BaseMVCActionCommand {
 				orderStatuses, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
 		for (CommerceOrderItem orderItem : orderItems) {
+			
 			_shipmentItemService.addCommerceShipmentItem(
-				shipmentId, orderItem.getCommerceOrderItemId(),
+				null,shipmentId, orderItem.getCommerceOrderItemId(),
 				warehouse.getCommerceInventoryWarehouseId(),
-				orderItem.getQuantity(), serviceContext);
+				orderItem.getQuantity(), false, serviceContext);
+			
 		}
 
 		shipment.setStatus(

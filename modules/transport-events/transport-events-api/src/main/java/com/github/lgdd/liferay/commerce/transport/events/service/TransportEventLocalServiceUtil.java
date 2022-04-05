@@ -16,6 +16,7 @@ package com.github.lgdd.liferay.commerce.transport.events.service;
 
 import com.github.lgdd.liferay.commerce.transport.events.model.TransportEvent;
 
+import com.liferay.petra.sql.dsl.query.DSLQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.PersistedModel;
@@ -133,6 +134,14 @@ public class TransportEventLocalServiceUtil {
 		TransportEvent transportEvent) {
 
 		return getService().deleteTransportEvent(transportEvent);
+	}
+
+	public static <T> T dslQuery(DSLQuery dslQuery) {
+		return getService().dslQuery(dslQuery);
+	}
+
+	public static int dslQueryCount(DSLQuery dslQuery) {
+		return getService().dslQueryCount(dslQuery);
 	}
 
 	public static DynamicQuery dynamicQuery() {
